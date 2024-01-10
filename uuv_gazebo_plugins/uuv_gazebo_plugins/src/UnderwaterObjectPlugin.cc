@@ -209,11 +209,16 @@ void UnderwaterObjectPlugin::Update(const common::UpdateInfo &_info)
     GZ_ASSERT(!std::isnan(linearAccel) && !std::isnan(angularAccel),
       "Linear or angular accelerations are invalid.");
 
-    hydro->ApplyHydrodynamicForces(time, this->flowVelocity);
-    this->PublishRestoringForce(link);
-    this->PublishHydrodynamicWrenches(link);
-    this->PublishCurrentVelocityMarker();
-    this->PublishIsSubmerged();
+    double z_position;
+    z_position = link->WorldPose().Pos()[2];
+
+    if (z_position < 0){
+      hydro->ApplyHydrodynamicForces(time, this->flowVelocity);
+      this->PublishRestoringForce(link);
+      this->PublishHydrodynamicWrenches(link);
+      this->PublishCurrentVelocityMarker();
+      this->PublishIsSubmerged();
+    }
   }
 }
 
